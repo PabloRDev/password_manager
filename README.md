@@ -36,7 +36,7 @@ password_manager/
 
 ---
 
-## ⚙️ Requirements
+## ⚙️ Technical Requirements
 
 - macOS or Linux
 - [Homebrew](https://brew.sh) (for installing libraries)
