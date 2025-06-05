@@ -29,26 +29,26 @@ ReadStatus read_line(char *buffer, size_t size) {
 }
 
 char *read_password(char *buffer, size_t size) {
-    struct termios termSettings, newTermSettings;
+    struct termios term_settings, new_term_settings;
 
     // PROMPT USER FOR PASSWORD
     printf("Password: ");
     fflush(stdout); // forces output to be written to stdout
 
     // DISABLE ECHO
-    tcgetattr(STDIN_FILENO, &termSettings);
-    newTermSettings = termSettings;
-    newTermSettings.c_lflag &= ~(ECHO); // disable echoing
-    tcsetattr(STDIN_FILENO, TCSANOW, &newTermSettings);
+    tcgetattr(STDIN_FILENO, &term_settings);
+    new_term_settings = term_settings;
+    new_term_settings.c_lflag &= ~(ECHO); // disable echoing
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings);
 
     // READ PASSWORD
-    const ReadStatus readResult = read_line(buffer, size);
+    const ReadStatus read_result = read_line(buffer, size);
 
     // REACTIVATE ECHO
-    tcsetattr(STDIN_FILENO, TCSANOW, &termSettings);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term_settings);
     printf("\n");
 
-    return (readResult == READ_OK) ? buffer : NULL;
+    return (read_result == READ_OK) ? buffer : NULL;
 }
 
 bool ask_yes_no(const char *prompt) {
