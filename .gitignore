@@ -1,0 +1,57 @@
+# Build directories
+/build/
+/cmake-build-debug/
+/cmake-build-release/
+/out/
+/bin/
+/build-*/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+
+# CLion project files
+.idea/
+*.iml
+cmake-build-debug/
+cmake-build-release/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Compiled object files and binaries
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Test output files (optional)
+*.testlog
+
+# Backup files
+*~
+*.bak
+
+# Vim swap files
+*.swp
+
+# Coverage files (if using code coverage)
+*.gcda
+*.gcno
+*.gcov
+
+# Other editor files (optional)
+.vscode/
