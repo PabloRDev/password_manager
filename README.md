@@ -70,3 +70,5 @@ ctest --verbose
 # Run the app
 ./password_manager
 ```
+
+Developed by [PabloRDev](https://github.com/PabloRDev)  for academic purposes
