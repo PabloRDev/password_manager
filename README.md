@@ -70,5 +70,20 @@ ctest --verbose
 # Run the app
 ./password_manager
 ```
+---
 
-Developed by [PabloRDev](https://github.com/PabloRDev)  for academic purposes
+## 🚀 Features
+
+- AES-256 encryption of stored password entries
+
+- Secure master password authentication (hashed and salted)
+
+- Add, edit, delete, search password entries
+
+- File-based encrypted storage
+
+- Modular C architecture with unit tests
+
+---
+
+###### _Developed by [PabloRDev](https://github.com/PabloRDev)  for academic purposes_
