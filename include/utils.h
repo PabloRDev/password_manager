@@ -16,46 +16,108 @@ typedef enum {
 
 // === Input Helpers ===
 
-// Read a line of text from stdin into a buffer (null-terminated, no newline)
+/**
+ * @brief Reads a line of text from stdin into a buffer.
+ *
+ * Removes the newline character if present and null-terminates the result.
+ *
+ * @param buffer Pointer to the destination buffer.
+ * @param size Size of the buffer.
+ * @return READ_OK on success, READ_ERROR on input failure.
+ */
 ReadStatus read_line(char *buffer, size_t size);
 
-// Read a password without showing it to the terminal (if possible)
+/**
+ * @brief Reads a password from stdin without echoing it (if supported by the terminal).
+ *
+ * @param buffer Pointer to the destination buffer.
+ * @param size Size of the buffer.
+ * @return Pointer to the buffer, or NULL on failure.
+ */
 char *read_password(char *buffer, size_t size);
 
-// Prompt the user with a yes/no question (returns true for yes)
+/**
+ * @brief Prompts the user with a yes/no question and reads the response.
+ *
+ * @param prompt Text to display (e.g., "Continue?").
+ * @return true if user answered yes, false otherwise.
+ */
 bool ask_yes_no(const char *prompt);
 
 // === String Manipulation ===
 
-// Remove trailing newline character from a string
+/**
+ * @brief Removes a trailing newline character from a string if present.
+ *
+ * @param str The string to modify.
+ */
 void remove_newline(char *str);
 
-// Trim leading and trailing whitespace in place
+/**
+ * @brief Removes leading and trailing whitespace from a string in place.
+ *
+ * @param str The string to trim.
+ */
 void trim_whitespace(char *str);
 
-// Convert a string to lowercase (ASCII only)
+/**
+ * @brief Converts all ASCII characters in a string to lowercase.
+ *
+ * @param str The string to convert.
+ */
 void to_lowercase(char *str);
 
-// Compare two strings case-insensitively (returns 0 if equal)
+/**
+ * @brief Compares two strings case-insensitively.
+ *
+ * @param a First string.
+ * @param b Second string.
+ * @return 0 if equal (case-insensitive), otherwise a non-zero value.
+ */
 int str_casecmp(const char *a, const char *b);
 
 // === Buffer & Memory ===
 
-// Clear the content of a char buffer securely
+/**
+ * @brief Securely zeroes out a buffer to erase sensitive data.
+ *
+ * @param buffer The buffer to zero out.
+ * @param size The number of bytes to zero.
+ */
 void secure_zero(char *buffer, size_t size);
 
-// Safely copy one string to another (like strncpy, but always null-terminates)
+/**
+ * @brief Copies a string to a destination buffer safely.
+ *
+ * Ensures the destination is always null-terminated.
+ *
+ * @param dest Destination buffer.
+ * @param src Source string.
+ * @param dest_size Size of the destination buffer.
+ */
 void safe_strcpy(char *dest, const char *src, size_t dest_size);
 
 // === Miscellaneous ===
 
-// Pause and wait for the user to press Enter
+/**
+ * @brief Waits for the user to press Enter.
+ *
+ * Useful for pausing the program after a message.
+ */
 void press_enter_to_continue(void);
 
-// Get the file path for the encrypted vault file
+/**
+ * @brief Gets the file path used to store the encrypted vault.
+ *
+ * @return Path to the vault file as a constant string.
+ */
 const char *get_vault_file_path(void);
 
-// Check if the vault file exists
+/**
+ * @brief Checks whether the encrypted vault file exists on disk.
+ *
+ * @return true if the vault file exists, false otherwise.
+ */
 static bool vault_file_exists(void);
 
 #endif // UTILS_H
