@@ -25,7 +25,7 @@ typedef enum {
  * @param path     Path to the file.
  * @param buffer   Output buffer to store read data.
  * @param length   Number of bytes to read.
- * @return       StorageResult with status and message.
+ * @return       StorageStatus with status.
  */
 StorageStatus read_file(const char *path, void *buffer, size_t length);
 
@@ -35,7 +35,7 @@ StorageStatus read_file(const char *path, void *buffer, size_t length);
  * @param path     Path to the file.
  * @param data     Pointer to the data to write.
  * @param length   Number of bytes to write.
- * @return       StorageResult with status and message.
+ * @return       StorageStatus with status.
  */
 StorageStatus write_file(const char *path, const void *data, size_t length);
 
