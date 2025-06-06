@@ -145,7 +145,7 @@ const char *get_vault_file_path(void) {
     return "vault.dat";
 }
 
-static bool vault_file_exists(void) {
+bool vault_file_exists(void) {
     struct stat st;
 
     return stat(get_vault_file_path(), &st) == 0;

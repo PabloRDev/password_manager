@@ -118,6 +118,6 @@ const char *get_vault_file_path(void);
  *
  * @return true if the vault file exists, false otherwise.
  */
-static bool vault_file_exists(void);
+bool vault_file_exists(void);
 
 #endif // UTILS_H
