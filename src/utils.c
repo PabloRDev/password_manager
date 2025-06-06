@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <termios.h> // API to control terminal behavior
 #include <unistd.h>
+#include <sys/stat.h>
 
 // === Input ===
 ReadStatus read_line(char *buffer, size_t size) {
@@ -142,4 +143,10 @@ const char *get_vault_file_path(void) {
     // You can customize this to return a fixed path or dynamically get home directory
     // For simplicity, return a relative file name
     return "vault.dat";
+}
+
+static bool vault_file_exists(void) {
+    struct stat st;
+
+    return stat(get_vault_file_path(), &st) == 0;
 }
