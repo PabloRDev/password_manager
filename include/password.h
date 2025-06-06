@@ -7,9 +7,12 @@
 
 #include <stdbool.h>
 
+#define PASSWORD_METADATA_SIZE (HASH_SIZE + SALT_SIZE)
+#define PASSWORD_MAX_LENGTH 256
+
 typedef enum {
     PASSWORD_OK,
-    PASSWORD_ERR_IO,
+    PASSWORD_ERR_STORAGE,
     PASSWORD_ERR_HASH_MISMATCH,
     PASSWORD_ERR_CRYPTO,
 } PasswordStatus;
@@ -21,6 +24,6 @@ PasswordStatus authenticate_master_password(bool *is_new_password);
 PasswordStatus load_password_data(unsigned char *hash_out, unsigned char *salt_out);
 
 // Saves a new hash and salt to the vault metadata
-PasswordStatus save_password_data(const unsigned char *hash, const unsigned char *salt);
+PasswordStatus save_password_data(const unsigned char *key, const unsigned char *salt);
 
 #endif // PASSWORD_H
