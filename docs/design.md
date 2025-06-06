@@ -14,8 +14,9 @@ on modular design, encapsulation, and secure data handling.
 | Module       | Purpose                                      |
 |--------------|----------------------------------------------|
 | `main.c`     | User interface and main menu loop            |
-| `crypto.*`   | Encryption and hashing with OpenSSL          |
+|
 | `password.*` | Structures and logic for password entries    |
+| `crypto.*`   | Encryption and hashing with OpenSSL          |
 | `storage.*`  | File handling, saving/loading encrypted data |
 | `utils.*`    | Miscellaneous helper functions               |
 
