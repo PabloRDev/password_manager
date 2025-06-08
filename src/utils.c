@@ -140,13 +140,21 @@ void press_enter_to_continue(void) {
 }
 
 const char *get_vault_file_path(void) {
-    // You can customize this to return a fixed path or dynamically get home directory
-    // For simplicity, return a relative file name
-    return "vault.dat";
+    static char path[PATH_MAX];
+
+    const char *home = getenv("HOME"); // home in Unix-like systems (macOS/Linux)
+    if (home == NULL) {
+        return NULL;
+    }
+
+    snprintf(path, sizeof(path), "%s/.vault.dat", home); // hidden file
+
+    return path;
 }
 
+
 bool vault_file_exists(void) {
-    struct stat st;
+    struct stat st; // struct to store file information
 
     return stat(get_vault_file_path(), &st) == 0;
 }
