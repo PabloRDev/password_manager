@@ -130,6 +130,39 @@ void safe_strcpy(char *dest, const char *src, size_t dest_size) {
     dest[dest_size - 1] = '\0';
 }
 
+// === Menu ===
+
+void show_menu(void) {
+    printf("\n===== Vault Menu =====\n");
+    printf("l - List all entries (TODO)\n");
+    printf("a - Add a new entry (TODO)\n");
+    printf("s - Search entries (TODO)\n");
+    printf("d - Delete an entry (TODO)\n");
+    printf("q - Quit\n");
+    printf("Select an option: ");
+}
+
+void handle_menu_option(char option) {
+    switch (option) {
+        case 'l':
+            printf("📝 Listing entries is not implemented yet.\n");
+            break;
+        case 'a':
+            printf("➕ Adding entry is not implemented yet.\n");
+            break;
+        case 's':
+            printf("🔍 Searching entries is not implemented yet.\n");
+            break;
+        case 'd':
+            printf("🗑️ Deleting entries is not implemented yet.\n");
+            break;
+        default:
+            printf("⚠️ Invalid option. Please try again.\n");
+            sleep(2);
+            break;
+    }
+}
+
 // === Miscellaneous ===
 
 void press_enter_to_continue(void) {

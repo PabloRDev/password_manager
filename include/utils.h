@@ -8,13 +8,14 @@
 #include <stdbool.h>
 
 #define ASK_YES_NO_MAX_PROMPT_LENGTH 4
+#define MENU_INPUT_BUFFER_SIZE 8
 
 typedef enum {
     READ_OK,
     READ_ERROR
 } ReadStatus;
 
-// === Input Helpers ===
+// === Input ===
 
 /**
  * @brief Reads a line of text from stdin into a buffer.
@@ -44,7 +45,7 @@ char *read_password(char *buffer, size_t size);
  */
 bool ask_yes_no(const char *prompt);
 
-// === String Manipulation ===
+// === String ===
 
 /**
  * @brief Removes a trailing newline character from a string if present.
@@ -96,6 +97,12 @@ void secure_zero(char *buffer, size_t size);
  * @param dest_size Size of the destination buffer.
  */
 void safe_strcpy(char *dest, const char *src, size_t dest_size);
+
+// === Menu ===
+
+void show_menu(void);
+
+void handle_menu_option(char option);
 
 // === Miscellaneous ===
 
