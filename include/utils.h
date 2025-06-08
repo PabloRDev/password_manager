@@ -7,6 +7,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "storage.h"
+
 #define ASK_YES_NO_MAX_PROMPT_LENGTH 4
 #define MENU_INPUT_BUFFER_SIZE 8
 
@@ -100,9 +102,31 @@ void safe_strcpy(char *dest, const char *src, size_t dest_size);
 
 // === Menu ===
 
+/**
+ * @brief Show the main menu.
+ */
 void show_menu(void);
 
-void handle_menu_option(char option);
+/**
+ * @brief Handle a menu option.
+ *
+ * @param option The option selected by the user.
+ * @param vault Pointer to the Vault structure to modify.
+ */
+void handle_menu_option(char option, const Vault *vault);
+
+/** @brief Prints the list of vault entries.
+ *
+ * @param vault Pointer to the Vault structure to list.
+ */
+void list_services(const Vault *vault);
+
+/** @brief Prints the details of a vault entry.
+ *
+ * @param vault Pointer to the Vault structure to list.
+ * @param index Index of the entry to print.
+ */
+void list_details(const Vault *vault, int index);
 
 // === Miscellaneous ===
 

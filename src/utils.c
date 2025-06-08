@@ -134,18 +134,18 @@ void safe_strcpy(char *dest, const char *src, size_t dest_size) {
 
 void show_menu(void) {
     printf("\n===== Vault Menu =====\n");
-    printf("l - List all entries (TODO)\n");
-    printf("a - Add a new entry (TODO)\n");
-    printf("s - Search entries (TODO)\n");
-    printf("d - Delete an entry (TODO)\n");
-    printf("q - Quit\n");
+    printf("L - List all entries (TODO)\n");
+    printf("A - Add a new entry (TODO)\n");
+    printf("S - Search entries (TODO)\n");
+    printf("D - Delete an entry (TODO)\n");
+    printf("Q - Quit\n");
     printf("Select an option: ");
 }
 
-void handle_menu_option(char option) {
+void handle_menu_option(char option, const Vault *vault) {
     switch (option) {
         case 'l':
-            printf("📝 Listing entries is not implemented yet.\n");
+            list_services(vault);
             break;
         case 'a':
             printf("➕ Adding entry is not implemented yet.\n");
@@ -159,8 +159,27 @@ void handle_menu_option(char option) {
         default:
             printf("⚠️ Invalid option. Please try again.\n");
             sleep(2);
+
             break;
     }
+}
+
+void list_services(const Vault *vault) {
+    printf("🔐 Stored services passwords:\n");
+
+    if (vault->count == 0) {
+        printf("🙂‍↔️ No passwords saved yet. Add a new password with the 'a' option.\n");
+        press_enter_to_continue();
+
+        return;
+    }
+
+    for (int i = 0; i < vault->count; ++i) {
+        printf("-------------------------------------------------\n");
+        printf("🔸 %d. Service: %s\n", i + 1, vault->entries[i].service);
+    }
+    printf("-------------------------------------------------\n");
+    printf("Press the number of the service you want to view, or 'q' to quit.\n");
 }
 
 // === Miscellaneous ===

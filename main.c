@@ -17,6 +17,7 @@ int main(void) {
     printf("🔐 Welcome to Password Manager 🔐\n First, enter your Master Password to continue:\n");
 
     bool is_new_password = false;
+    Vault vault = {0};
     const PasswordStatus auth_status = authenticate_master_password(&is_new_password);
 
     if (auth_status != PASSWORD_OK) {
@@ -38,15 +39,24 @@ int main(void) {
 
     if (is_new_password) {
         printf("🙉 First timer! \n ✅ New Master Password set, welcome!\n");
+        vault.count = 0;
         press_enter_to_continue();
     } else {
+        const StorageStatus load_status = load_vault(&vault);
+
+        if (load_status != STORAGE_OK) {
+            fprintf(stderr, "❌ ERROR: Failed to read/write to the vault file. \n Check the error with the admin.\n");
+
+            press_enter_to_continue();
+            return EXIT_FAILURE;
+        }
+
         printf("🔓 You're in, welcome again! 🤟 \n\n Loading your data... 🔎 \n");
         sleep(2);
     }
 
-    // Check menu options
+    // Check menu options until user quits
     while (true) {
-        // loops until user chooses to quit
         show_menu();
 
         char option[MENU_INPUT_BUFFER_SIZE];
@@ -70,13 +80,12 @@ int main(void) {
         char choice = option[0];
 
         if (choice == 'q') {
-            printf("👋 Ok, see you next time!\n");
-            sleep(2);
+            printf("👋 Ok. See you next time! 🥹\n");
 
             break;
         }
-        //  TODO: Add menu options
-        handle_menu_option(choice);
+
+        handle_menu_option(choice, &vault);
     }
 
     return EXIT_SUCCESS;
