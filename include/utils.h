@@ -133,7 +133,8 @@ void list_details(const Vault *vault, int index);
 /**
  * @brief Waits for the user to press Enter.
  *
- * Useful for pausing the program after a message.
+ * Useful for pausing the program after a message. Clears the terminal screen.
+ *
  */
 void press_enter_to_continue(void);
 

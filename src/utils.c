@@ -189,6 +189,9 @@ void press_enter_to_continue(void) {
     while (getchar() != '\n') {
         ; // discard
     }
+    // Clear screen
+    printf("\033[2J\033[H");
+    fflush(stdout);
 }
 
 const char *get_vault_file_path(void) {
