@@ -64,6 +64,55 @@ StorageStatus write_file(const char *path, const void *data, size_t length) {
 
 // === Vault I/O ===
 
+bool add_vault_entry(Vault *vault, const VaultEntry *entry) {
+    if (vault->count >= MAX_ENTRIES) {
+        printf("❌ Vault is full! You need to delete one password before.\n");
+
+        return false;
+    }
+
+    // Copy service name, username, and password safely
+    strncpy(vault->entries[vault->count].service, entry->service, SERVICE_NAME_MAX - 1);
+    vault->entries[vault->count].service[SERVICE_NAME_MAX - 1] = '\0';
+
+    strncpy(vault->entries[vault->count].username, entry->username, USERNAME_MAX - 1);
+    vault->entries[vault->count].username[USERNAME_MAX - 1] = '\0';
+
+    strncpy(vault->entries[vault->count].password, entry->password, PASSWORD_MAX - 1);
+    vault->entries[vault->count].password[PASSWORD_MAX - 1] = '\0';
+
+    strncpy(vault->entries[vault->count].notes, entry->notes, NOTES_MAX - 1);
+    vault->entries[vault->count].notes[NOTES_MAX - 1] = '\0';
+
+    vault->count++;
+
+    return true;
+}
+
+void get_vault_entry(VaultEntry *entry) {
+    if (!entry) return;
+
+    printf("Enter Service:\n");
+    if (read_line(entry->service, SERVICE_NAME_MAX) != READ_OK) {
+        entry->service[0] = '\0'; // If the user enters nothing, set to empty string
+    }
+
+    printf("Enter Username:\n");
+    if (read_line(entry->username, USERNAME_MAX) != READ_OK) {
+        entry->username[0] = '\0';
+    }
+
+    printf("Enter Password:\n");
+    if (read_password(entry->password, PASSWORD_MAX) != READ_OK) {
+        entry->password[0] = '\0';
+    }
+
+    printf("Enter Notes (optional):\n");
+    if (read_line(entry->notes, NOTES_MAX) != READ_OK) {
+        entry->notes[0] = '\0';
+    }
+}
+
 // === Vault Persistence ===
 
 StorageStatus load_vault(Vault *vault) {

@@ -5,17 +5,20 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #define MAX_ENTRIES 100
 #define SERVICE_NAME_MAX 64
 #define USERNAME_MAX 64
 #define PASSWORD_MAX 64
+#define NOTES_MAX 256
 
 typedef struct {
     char service[SERVICE_NAME_MAX];
     char username[USERNAME_MAX];
     char password[PASSWORD_MAX];
+    char notes[NOTES_MAX];
 } VaultEntry;
 
 typedef struct {
@@ -69,5 +72,21 @@ StorageStatus load_vault(Vault *vault);
  * @return         StorageStatus indicating success or error.
  */
 StorageStatus save_vault(const Vault *vault);
+
+// === Vault I/O ===
+
+/** @brief Adds a new vault entry.
+ *
+ * @param vault Pointer to the Vault structure to modify.
+ * @param entry Pointer to the VaultEntry structure to add.
+ *
+ */
+bool add_vault_entry(Vault *vault, const VaultEntry *entry);
+
+/** @brief Gets a vault entry from the user.
+ *
+ * @param entry Pointer to the VaultEntry structure to fill.
+ */
+void get_vault_entry(VaultEntry *entry);
 
 #endif // STORAGE_H
