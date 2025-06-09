@@ -103,7 +103,7 @@ void get_vault_entry(VaultEntry *entry) {
     }
 
     printf("Enter Password:\n");
-    if (read_password(entry->password, PASSWORD_MAX) != READ_OK) {
+    if (read_password(entry->password, PASSWORD_MAX) == NULL) {
         entry->password[0] = '\0';
     }
 

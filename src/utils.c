@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include "password.h"
+
 // === Input ===
 ReadStatus read_line(char *buffer, size_t size) {
     assert(buffer != NULL);
@@ -199,6 +201,43 @@ void list_services(const Vault *vault) {
     }
     printf("-------------------------------------------------\n");
     printf("Press the number of the service you want to view, or 'q' to quit.\n");
+
+    while (true) {
+        char option[MENU_INPUT_BUFFER_SIZE];
+        if (read_line(option, sizeof(option)) != READ_OK) {
+            fprintf(stderr, "❌ ERROR: Failed to read input. \n Check the error with the admin.\n");
+            press_enter_to_continue();
+
+            break;
+        }
+
+        trim_whitespace(option);
+        to_lowercase(option);
+
+        if (strcmp(option, "q") == 0) {
+            break;
+        }
+
+        const int index = atoi(option); // Convert string to integer
+        if (index <= 0 || index > vault->count) {
+            printf("⚠️ Invalid option. Please, try again.\n");
+            sleep(2);
+
+            continue;
+        }
+
+        const VaultEntry *entry = &vault->entries[index - 1];
+        printf("-------------------------------------------------\n");
+        printf("📄 Details for Service #%d\n", index);
+        printf("-------------------------------------------------\n");
+        printf("🔹 Service:  %s\n", entry->service);
+        printf("👤 Username: %s\n", entry->username);
+        show_and_hide_password(entry->password);
+        printf("📝 Notes:    %s\n", entry->notes[0] ? entry->notes : "(none)");
+        printf("-------------------------------------------------\n");
+
+        break;
+    }
 }
 
 // === Miscellaneous ===
@@ -211,6 +250,30 @@ void press_enter_to_continue(void) {
     // Clear screen
     printf("\033[2J\033[H");
     fflush(stdout);
+}
+
+void show_and_hide_password(const char *password) {
+    int num_asterisks = 5;
+    printf("🔑 Password: %s", password);
+    fflush(stdout);
+
+    sleep(5); // Wait 5 seconds
+
+    printf("\r🔑 Password: ");
+    for (size_t i = 0; i < num_asterisks; i++) {
+        printf(" ");
+    }
+
+    printf("\r🔑 Password: ");
+    fflush(stdout);
+
+    for (size_t i = 0; i < num_asterisks; i++) {
+        printf("*");
+        fflush(stdout);
+        usleep(100000);
+    }
+
+    printf("\n");
 }
 
 const char *get_file_path(const char *filename) {

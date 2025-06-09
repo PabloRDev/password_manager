@@ -138,6 +138,16 @@ void list_details(const Vault *vault, int index);
  */
 void press_enter_to_continue(void);
 
+/**
+ * @brief Shows a password in the terminal and hides it afterwards.
+ *
+ * The password is shown in the terminal using asterisks and then replaced with a dot.
+ *
+ *
+ * @param password The password to show.
+ */
+void show_and_hide_password(const char *password);
+
 /** @brief Gets the full path to a file.
  *
  * @param filename The filename to get the path for.
