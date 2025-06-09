@@ -113,7 +113,7 @@ void show_menu(void);
  * @param option The option selected by the user.
  * @param vault Pointer to the Vault structure to modify.
  */
-void handle_menu_option(char option, const Vault *vault);
+void handle_menu_option(char option, Vault *vault);
 
 /** @brief Prints the list of vault entries.
  *
