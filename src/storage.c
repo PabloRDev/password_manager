@@ -116,17 +116,19 @@ void get_vault_entry(VaultEntry *entry) {
 // === Vault Persistence ===
 
 StorageStatus load_vault(Vault *vault) {
-    const char *path = get_vault_file_path();
-    if (path == NULL || vault == NULL) return STORAGE_ERR_OPEN;
+    const char *vault_path = get_file_path("vault");
 
-    return read_file(path, vault, sizeof(Vault));
+    if (vault_path == NULL || vault == NULL) return STORAGE_ERR_OPEN;
+
+    return read_file(vault_path, vault, sizeof(Vault));
 }
 
 StorageStatus save_vault(const Vault *vault) {
     assert(vault != NULL);
 
-    const char *path = get_vault_file_path();
-    if (path == NULL) return STORAGE_ERR_OPEN;
+    const char *vault_path = get_file_path("vault");
 
-    return write_file(path, vault, sizeof(Vault));
+    if (vault_path == NULL) return STORAGE_ERR_OPEN;
+
+    return write_file(vault_path, vault, sizeof(Vault));
 }

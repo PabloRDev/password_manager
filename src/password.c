@@ -20,7 +20,7 @@ PasswordStatus authenticate_master_password(bool *is_new_password) {
     unsigned char stored_salt[SALT_SIZE];
 
     // Vault does not exist —> create new password
-    if (!vault_file_exists()) {
+    if (!master_password_file_exists()) {
         char password[PASSWORD_MAX_LENGTH];
 
         if (!read_password(password, sizeof(password))) {
@@ -93,57 +93,23 @@ PasswordStatus authenticate_master_password(bool *is_new_password) {
 // === Load Password Data ===
 
 PasswordStatus load_password_data(unsigned char *hash_out, unsigned char *salt_out) {
-    assert(hash_out != NULL);
-    assert(salt_out != NULL);
+    unsigned char buffer[KEY_SIZE + SALT_SIZE];
+    StorageStatus status = read_file(get_file_path("mp"), buffer, sizeof(buffer));
 
-    // Check if a vault file exists
-    FILE *file = fopen(get_vault_file_path(), "rb"); // rb -> read binary mode
-    if (!file) return PASSWORD_ERR_STORAGE;
+    if (status != STORAGE_OK) return PASSWORD_ERR_STORAGE;
 
-    // Read hash from a file
-    if (fread(hash_out, 1, KEY_SIZE, file) != KEY_SIZE) {
-        fclose(file);
-
-        return PASSWORD_ERR_STORAGE;
-    }
-
-    // Read salt from a file
-    if (fread(salt_out, 1, SALT_SIZE, file) != SALT_SIZE) {
-        fclose(file);
-
-        return PASSWORD_ERR_STORAGE;
-    }
-
-    fclose(file);
-
+    memcpy(hash_out, buffer, KEY_SIZE);
+    memcpy(salt_out, buffer + KEY_SIZE, SALT_SIZE);
     return PASSWORD_OK;
 }
 
 // === Save Password Data ===
 
 PasswordStatus save_password_data(const unsigned char *key, const unsigned char *salt) {
-    assert(key != NULL);
-    assert(salt != NULL);
+    unsigned char buffer[KEY_SIZE + SALT_SIZE];
+    memcpy(buffer, key, KEY_SIZE);
+    memcpy(buffer + KEY_SIZE, salt, SALT_SIZE);
 
-    // Check if a vault file exists
-    FILE *file = fopen(get_vault_file_path(), "wb"); // wb -> write binary mode
-    if (!file) return PASSWORD_ERR_STORAGE;
-
-    // Write hash to a file
-    if (fwrite(key, 1, KEY_SIZE, file) != KEY_SIZE) {
-        fclose(file);
-
-        return PASSWORD_ERR_STORAGE;
-    }
-
-    // Write salt to a file
-    if (fwrite(salt, 1, SALT_SIZE, file) != SALT_SIZE) {
-        fclose(file);
-
-        return PASSWORD_ERR_STORAGE;
-    }
-
-    fclose(file);
-
-    return PASSWORD_OK;
+    StorageStatus status = write_file(get_file_path("mp"), buffer, sizeof(buffer));
+    return (status == STORAGE_OK) ? PASSWORD_OK : PASSWORD_ERR_STORAGE;
 }
