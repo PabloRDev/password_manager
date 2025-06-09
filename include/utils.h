@@ -138,12 +138,12 @@ void list_details(const Vault *vault, int index);
  */
 void press_enter_to_continue(void);
 
-/**
- * @brief Gets the file path used to store the encrypted vault.
+/** @brief Gets the full path to a file.
  *
- * @return Path to the vault file as a constant string.
+ * @param filename The filename to get the path for.
+ * @return The full path to the file.
  */
-const char *get_vault_file_path(void);
+const char *get_file_path(const char *filename);
 
 /**
  * @brief Checks whether the encrypted vault file exists on disk.
@@ -151,5 +151,12 @@ const char *get_vault_file_path(void);
  * @return true if the vault file exists, false otherwise.
  */
 bool vault_file_exists(void);
+
+/**
+ * @brief Checks whether the master password exists in persistent storage.
+ *
+ * @return true if the master password exists, false otherwise.
+ */
+bool master_password_file_exists(void);
 
 #endif // UTILS_H

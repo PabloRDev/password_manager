@@ -134,8 +134,8 @@ void safe_strcpy(char *dest, const char *src, size_t dest_size) {
 
 void show_menu(void) {
     printf("\n===== Vault Menu =====\n");
-    printf("L - List all entries (TODO)\n");
-    printf("A - Add a new entry (TODO)\n");
+    printf("L - List all entries\n");
+    printf("A - Add a new entry\n");
     printf("S - Search entries (TODO)\n");
     printf("D - Delete an entry (TODO)\n");
     printf("Q - Quit\n");
@@ -213,22 +213,27 @@ void press_enter_to_continue(void) {
     fflush(stdout);
 }
 
-const char *get_vault_file_path(void) {
+const char *get_file_path(const char *filename) {
     static char path[PATH_MAX];
 
-    const char *home = getenv("HOME"); // home in Unix-like systems (macOS/Linux)
-    if (home == NULL) {
+    const char *home = getenv("HOME"); // Home directory path in UNIX-like systems
+    if (home == NULL || filename == NULL) {
         return NULL;
     }
 
-    snprintf(path, sizeof(path), "%s/.vault.dat", home); // hidden file
+    snprintf(path, sizeof(path), "%s/.%s.dat", home, filename); // Hidden file
 
     return path;
 }
 
-
 bool vault_file_exists(void) {
     struct stat st; // struct to store file information
 
-    return stat(get_vault_file_path(), &st) == 0;
+    return stat(get_file_path("vault"), &st) == 0;
+}
+
+bool master_password_file_exists(void) {
+    struct stat st; // struct to store file information
+
+    return stat(get_file_path("mp"), &st) == 0;
 }
