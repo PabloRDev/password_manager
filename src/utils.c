@@ -142,13 +142,33 @@ void show_menu(void) {
     printf("Select an option: ");
 }
 
-void handle_menu_option(char option, const Vault *vault) {
+void handle_menu_option(char option, Vault *vault) {
     switch (option) {
         case 'l':
             list_services(vault);
+            press_enter_to_continue();
             break;
         case 'a':
-            printf("➕ Adding entry is not implemented yet.\n");
+            VaultEntry entry = {0};
+
+            get_vault_entry(&entry);
+            if (add_vault_entry(vault, &entry)) {
+                StorageStatus save_status = save_vault(vault);
+                if (save_status != STORAGE_OK) {
+                    fprintf(
+                        stderr,
+                        "❌ ERROR: Failed to save entry on the vault file. \n Check the error with the admin.\n");
+
+                    press_enter_to_continue();
+                }
+                printf("✅ Entry added successfully!\n");
+                printf("➕ 🔸 %d. Service: %s\n", vault->count, vault->entries[vault->count - 1].service);
+                press_enter_to_continue();
+            } else {
+                printf("❌ Failed to add entry. Please, try again.\n");
+                press_enter_to_continue();
+            }
+
             break;
         case 's':
             printf("🔍 Searching entries is not implemented yet.\n");
@@ -157,7 +177,7 @@ void handle_menu_option(char option, const Vault *vault) {
             printf("🗑️ Deleting entries is not implemented yet.\n");
             break;
         default:
-            printf("⚠️ Invalid option. Please try again.\n");
+            printf("⚠️ Invalid option. Please, try again.\n");
             sleep(2);
 
             break;
@@ -169,7 +189,6 @@ void list_services(const Vault *vault) {
 
     if (vault->count == 0) {
         printf("🙂‍↔️ No passwords saved yet. Add a new password with the 'a' option.\n");
-        press_enter_to_continue();
 
         return;
     }
