@@ -2,8 +2,11 @@
 
 - Change master password after authentication
 - Max attempts with the master password
-- Clipboard integration
-- Multiple passwords from a file
+- Generate password and save on clipboard for next adding
+- Password Strength Checker
+- Copy a password without seeing it (clipboard integration)
+- Adding multiple at once
+- Panic password deletes all.
+- Delete all after N incorrect password attempts (brute-force protection).
 - Timeout auto-lock
-- Password generator
 - GUI front-end
