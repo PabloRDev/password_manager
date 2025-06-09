@@ -29,7 +29,7 @@ int main(void) {
                 stderr, "❌ ERROR: Failed to perform cryptographic operations. \n Check the error with the admin.\n");
         }
         if (auth_status == PASSWORD_ERR_HASH_MISMATCH) {
-            fprintf(stderr, "🚫 Nope... Master Password is incorrect. Try again.\n");
+            fprintf(stderr, "🚫 Nope... Master Password is incorrect. Please, try again.\n");
         }
 
         press_enter_to_continue();
@@ -71,7 +71,7 @@ int main(void) {
         to_lowercase(option);
 
         if (strlen(option) != 1) {
-            printf("⚠️ Invalid option. Please try again.\n");
+            printf("⚠️ Invalid option. Please, try again.\n");
             sleep(2);
 
             continue;
