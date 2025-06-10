@@ -177,7 +177,7 @@ void handle_menu_option(char option, Vault *vault) {
         }
         case 's':
             while (true) {
-                printf("Enter the service name, or 'Q' to quit.\n");
+                printf("Enter the service name, or 'Q' to quit:\n");
 
                 char service_name[MENU_INPUT_BUFFER_SIZE];
                 if (read_line(service_name, sizeof(service_name)) != READ_OK) {
@@ -206,7 +206,7 @@ void handle_menu_option(char option, Vault *vault) {
             break;
         case 'd': // Delete an entry
             while (true) {
-                printf("Enter the service name TO DELETE, or 'Q' to quit.\n");
+                printf("Enter the service name TO DELETE, or 'Q' to quit:\n");
 
                 char service_name[MENU_INPUT_BUFFER_SIZE];
                 if (read_line(service_name, sizeof(service_name)) != READ_OK) {

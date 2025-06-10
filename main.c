@@ -51,8 +51,8 @@ int main(void) {
             return EXIT_FAILURE;
         }
 
-        printf("🔓 You're in, welcome again! 🤟 \n\n Loading your data... 🔎 \n");
-        sleep(2);
+        printf("🔓 You're in, welcome again! 🤟 \n\n Loading data... 🔎 \n");
+        sleep(vault.count / 2);
     }
 
     // Check menu options until user quits
