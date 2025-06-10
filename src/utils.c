@@ -146,36 +146,39 @@ void show_menu(void) {
 
 void handle_menu_option(char option, Vault *vault) {
     switch (option) {
-        case 'l':
+        case 'l': // List all entries
             list_services(vault);
-            press_enter_to_continue();
-            break;
-        case 'a':
-            VaultEntry entry = {0};
 
+            break;
+        case 'a': // Add a new entry
+            VaultEntry entry = {0};
             get_vault_entry(&entry);
+
             if (add_vault_entry(vault, &entry)) {
-                StorageStatus save_status = save_vault(vault);
+                const StorageStatus save_status = save_vault(vault);
                 if (save_status != STORAGE_OK) {
                     fprintf(
                         stderr,
                         "❌ ERROR: Failed to save entry on the vault file. \n Check the error with the admin.\n");
 
                     press_enter_to_continue();
+                    return;
                 }
+
                 printf("✅ Entry added successfully!\n");
                 printf("➕ 🔸 %d. Service: %s\n", vault->count, vault->entries[vault->count - 1].service);
-                press_enter_to_continue();
             } else {
                 printf("❌ Failed to add entry. Please, try again.\n");
+
                 press_enter_to_continue();
             }
 
+            press_enter_to_continue();
             break;
         case 's':
             printf("🔍 Searching entries is not implemented yet.\n");
             break;
-        case 'd':
+        case 'd': // Delete an entry
             printf("🗑️ Deleting entries is not implemented yet.\n");
             break;
         default:
@@ -198,9 +201,11 @@ void list_services(const Vault *vault) {
     for (int i = 0; i < vault->count; ++i) {
         printf("-------------------------------------------------\n");
         printf("🔸 %d. Service: %s\n", i + 1, vault->entries[i].service);
+        printf("👤 Username: %s\n", vault->entries[i].username);
+        printf("📝 Notes:    %s\n", vault->entries[i].notes[0] ? vault->entries[i].notes : "");
     }
     printf("-------------------------------------------------\n");
-    printf("Press the number of the service you want to view, or 'q' to quit.\n");
+    printf("Press the number of the service you want to view, or 'Q' to quit.\n");
 
     while (true) {
         char option[MENU_INPUT_BUFFER_SIZE];
@@ -215,29 +220,35 @@ void list_services(const Vault *vault) {
         to_lowercase(option);
 
         if (strcmp(option, "q") == 0) {
-            break;
+            return;
         }
 
-        const int index = atoi(option); // Convert string to integer
-        if (index <= 0 || index > vault->count) {
-            printf("⚠️ Invalid option. Please, try again.\n");
-            sleep(2);
-
-            continue;
-        }
-
-        const VaultEntry *entry = &vault->entries[index - 1];
-        printf("-------------------------------------------------\n");
-        printf("📄 Details for Service #%d\n", index);
-        printf("-------------------------------------------------\n");
-        printf("🔹 Service:  %s\n", entry->service);
-        printf("👤 Username: %s\n", entry->username);
-        show_and_hide_password(entry->password);
-        printf("📝 Notes:    %s\n", entry->notes[0] ? entry->notes : "(none)");
-        printf("-------------------------------------------------\n");
+        list_services_details(option, vault);
 
         break;
     }
+}
+
+void list_services_details(char *option, const Vault *vault) {
+    const int index = atoi(option); // Convert string to integer
+    if (index <= 0 || index > vault->count) {
+        printf("⚠️ Invalid option. Please, try again.\n");
+        sleep(2);
+
+        return;
+    }
+
+    const VaultEntry *entry = &vault->entries[index - 1];
+    printf("-------------------------------------------------\n");
+    printf("📄 Details for Service #%d\n", index);
+    printf("-------------------------------------------------\n");
+    printf("🔸 Service:  %s\n", entry->service);
+    printf("📝 Notes:    %s\n", entry->notes[0] ? entry->notes : "");
+    printf("👤 Username: %s\n", entry->username);
+    show_and_hide_password(entry->password);
+    printf("-------------------------------------------------\n");
+
+    press_enter_to_continue();
 }
 
 // === Miscellaneous ===

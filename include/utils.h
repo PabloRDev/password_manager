@@ -121,6 +121,13 @@ void handle_menu_option(char option, Vault *vault);
  */
 void list_services(const Vault *vault);
 
+/** @brief Prints the details of all vault entries.
+ *
+ * @param option The option selected by the user.
+ * @param vault Pointer to the Vault structure to list.
+ */
+void list_services_details(char *option, const Vault *vault);
+
 /** @brief Prints the details of a vault entry.
  *
  * @param vault Pointer to the Vault structure to list.
