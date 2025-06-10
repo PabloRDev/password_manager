@@ -148,30 +148,29 @@ void handle_menu_option(char option, Vault *vault) {
     switch (option) {
         case 'l': // List all entries
             list_services(vault);
-
             break;
-        case 'a': {
-            // Add a new entry
-            const VaultEntry entry = create_vault_entry_from_user();
+        case 'a': // Add a new entry
+        {
+            const VaultEntry new_entry = create_vault_entry_from_user();
 
-            if (add_vault_entry(vault, &entry)) {
-                const StorageStatus save_status = save_vault(vault);
-                if (save_status != STORAGE_OK) {
-                    fprintf(stderr, "❌ ERROR: Failed to save entry on the vault file. \n "
-                            "Check the error with the admin.\n");
-
-                    press_enter_to_continue();
-                    return;
-                }
-
-                printf("✅ Entry added successfully!\n");
-                printf("➕ 🔸 %d. Service: %s\n", vault->count,
-                       vault->entries[vault->count - 1].service);
-            } else {
+            if (!add_vault_entry(vault, &new_entry)) {
                 printf("❌ Failed to add entry. Please, try again.\n");
 
                 press_enter_to_continue();
             }
+
+            const StorageStatus save_status = save_vault(vault);
+            if (save_status != STORAGE_OK) {
+                fprintf(stderr, "❌ ERROR: Failed to save entry on the vault file. \n "
+                        "Check the error with the admin.\n");
+
+                press_enter_to_continue();
+                return;
+            }
+
+            printf("✅ Entry added successfully!\n");
+            printf("➕ 🔸 %d. Service: %s\n", vault->count,
+                   vault->entries[vault->count - 1].service);
 
             press_enter_to_continue();
             break;
@@ -187,7 +186,6 @@ void handle_menu_option(char option, Vault *vault) {
 
                     press_enter_to_continue();
                 }
-
                 trim_whitespace(service_name);
                 to_lowercase(service_name);
                 if (strcmp(service_name, "q") == 0) {
@@ -205,7 +203,7 @@ void handle_menu_option(char option, Vault *vault) {
 
                 break;
             }
-
+            break;
         case 'd': // Delete an entry
             while (true) {
                 printf("Enter the service name TO DELETE, or 'Q' to quit.\n");
@@ -230,24 +228,24 @@ void handle_menu_option(char option, Vault *vault) {
                     continue;
                 }
 
-                list_services_details(found_entry, -1);
                 if (!ask_yes_no("Are you sure you want to delete this entry?")) {
                     break;
                 }
 
-                if (delete_vault_entry(vault, found_entry)) {
-                    const StorageStatus save_status = save_vault(vault);
-                    if (save_status != STORAGE_OK) {
-                        fprintf(
-                            stderr,
-                            "❌ ERROR: Failed to save entry on the vault file.\n Check the error with the admin.\n");
-                    }
-                    printf("✅🧹 Entry deleted successfully!\n");
-                } else {
+                if (!delete_vault_entry(vault, found_entry)) {
                     printf("❌ Failed to delete entry. Please, try again.\n");
 
                     press_enter_to_continue();
                 };
+
+                const StorageStatus save_status = save_vault(vault);
+                if (save_status != STORAGE_OK) {
+                    fprintf(
+                        stderr,
+                        "❌ ERROR: Failed to save entry on the vault file.\n Check the error with the admin.\n");
+                }
+                printf("✅ Entry deleted successfully!\n");
+                printf("➖ 🔸 Service: %s\n", service_name);
 
                 press_enter_to_continue();
                 break;
@@ -264,7 +262,8 @@ void handle_menu_option(char option, Vault *vault) {
 void list_services(const Vault *vault) {
     printf("🔐 Stored services passwords:\n");
 
-    if (vault->count == 0) { // No passwords
+    // No passwords
+    if (vault->count == 0) {
         printf("🙂‍↔️ No passwords saved yet. Try to add one with the 'A' option.\n");
 
         press_enter_to_continue();
@@ -282,8 +281,8 @@ void list_services(const Vault *vault) {
 
     // List service details by index or service name
     while (true) {
-        char option[MENU_INPUT_BUFFER_SIZE];
-        if (read_line(option, sizeof(option)) != READ_OK) {
+        char input[MENU_INPUT_BUFFER_SIZE];
+        if (read_line(input, sizeof(input)) != READ_OK) {
             fprintf(
                 stderr,
                 "❌ ERROR: Failed to read input.\nCheck the error with the admin.\n");
@@ -291,13 +290,12 @@ void list_services(const Vault *vault) {
             break;
         }
 
-        trim_whitespace(option);
-        to_lowercase(option);
+        trim_whitespace(input);
+        to_lowercase(input);
 
-        if (strcmp(option, "q") == 0)
-            return;
+        if (strcmp(input, "q") == 0) return;
 
-        const int index = atoi(option) - 1;
+        const int index = atoi(input) - 1;
 
         if (index < 0 || index >= vault->count) {
             printf("⚠️ Invalid option. Please, try again.\n");
@@ -363,7 +361,7 @@ void show_and_hide_password(const char *password) {
     for (size_t i = 0; i < num_asterisks; i++) {
         printf("*");
         fflush(stdout);
-        usleep(100000);
+        usleep(50000);
     }
 
     printf("\n");
