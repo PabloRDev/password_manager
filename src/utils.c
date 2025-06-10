@@ -139,7 +139,7 @@ void show_menu(void) {
     printf("L - List all entries\n");
     printf("A - Add a new entry\n");
     printf("S - Search entries\n");
-    printf("D - Delete an entry (TODO)\n");
+    printf("D - Delete an entry\n");
     printf("Q - Quit\n");
     printf("Select an option: ");
 }
@@ -150,9 +150,9 @@ void handle_menu_option(char option, Vault *vault) {
             list_services(vault);
 
             break;
-        case 'a': // Add a new entry
-            VaultEntry entry = {0};
-            get_vault_entry(&entry);
+        case 'a': {
+            // Add a new entry
+            const VaultEntry entry = create_vault_entry_from_user();
 
             if (add_vault_entry(vault, &entry)) {
                 const StorageStatus save_status = save_vault(vault);
@@ -175,6 +175,7 @@ void handle_menu_option(char option, Vault *vault) {
 
             press_enter_to_continue();
             break;
+        }
         case 's':
             while (true) {
                 printf("Enter the service name, or 'Q' to quit.\n");
@@ -206,7 +207,51 @@ void handle_menu_option(char option, Vault *vault) {
             }
 
         case 'd': // Delete an entry
-            printf("🗑️ Deleting entries is not implemented yet.\n");
+            while (true) {
+                printf("Enter the service name TO DELETE, or 'Q' to quit.\n");
+
+                char service_name[MENU_INPUT_BUFFER_SIZE];
+                if (read_line(service_name, sizeof(service_name)) != READ_OK) {
+                    fprintf(stderr, "❌ ERROR: Failed to read input. \n Check the error "
+                            "with the admin.\n");
+
+                    press_enter_to_continue();
+                }
+                trim_whitespace(service_name);
+                to_lowercase(service_name);
+                if (strcmp(service_name, "q") == 0) {
+                    return;
+                }
+
+                VaultEntry *found_entry = search_vault_entry(vault, service_name);
+                if (!found_entry) {
+                    printf("🔎🫣 No entries found with that name.\n");
+
+                    continue;
+                }
+
+                list_services_details(found_entry, -1);
+                if (!ask_yes_no("Are you sure you want to delete this entry?")) {
+                    break;
+                }
+
+                if (delete_vault_entry(vault, found_entry)) {
+                    const StorageStatus save_status = save_vault(vault);
+                    if (save_status != STORAGE_OK) {
+                        fprintf(
+                            stderr,
+                            "❌ ERROR: Failed to save entry on the vault file.\n Check the error with the admin.\n");
+                    }
+                    printf("✅🧹 Entry deleted successfully!\n");
+                } else {
+                    printf("❌ Failed to delete entry. Please, try again.\n");
+
+                    press_enter_to_continue();
+                };
+
+                press_enter_to_continue();
+                break;
+            }
             break;
         default:
             printf("⚠️ Invalid option. Please, try again.\n");
@@ -219,9 +264,10 @@ void handle_menu_option(char option, Vault *vault) {
 void list_services(const Vault *vault) {
     printf("🔐 Stored services passwords:\n");
 
-    if (vault->count == 0) {
-        printf("🙂‍↔️ No passwords saved yet. Add a new password with the 'a' option.\n");
+    if (vault->count == 0) { // No passwords
+        printf("🙂‍↔️ No passwords saved yet. Try to add one with the 'A' option.\n");
 
+        press_enter_to_continue();
         return;
     }
 

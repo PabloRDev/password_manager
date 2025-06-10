@@ -83,11 +83,15 @@ StorageStatus save_vault(const Vault *vault);
  */
 bool add_vault_entry(Vault *vault, const VaultEntry *entry);
 
-/** @brief Gets a vault entry from the user input.
+/** @brief Fills a VaultEntry structure with user input.
+ *
+ * The user is prompted to enter the service name, username, password, and notes.
+ *
+ * The VaultEntry structure is filled with the user input.
  *
  * @param entry Pointer to the VaultEntry structure to fill.
  */
-void get_vault_entry(VaultEntry *entry);
+VaultEntry create_vault_entry_from_user();
 
 /**
  * @brief Searches for a vault entry by service name.
@@ -97,5 +101,14 @@ void get_vault_entry(VaultEntry *entry);
  * @return Pointer to the VaultEntry structure if found, NULL otherwise.
  */
 VaultEntry *search_vault_entry(Vault *vault, const char *service);
+
+/**
+ * @brief Deletes a vault entry.
+ *
+ * @param vault Pointer to the Vault structure to modify.
+ * @param entry Pointer to the VaultEntry structure to delete.
+ * @return true if the entry was deleted, false otherwise.
+ */
+bool delete_vault_entry(Vault *vault, VaultEntry *entry);
 
 #endif // STORAGE_H

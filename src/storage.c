@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -89,28 +90,42 @@ bool add_vault_entry(Vault *vault, const VaultEntry *entry) {
     return true;
 }
 
-void get_vault_entry(VaultEntry *entry) {
-    if (!entry) return;
+VaultEntry create_vault_entry_from_user() {
+    VaultEntry entry = {0};
 
     printf("Enter Service:\n");
-    if (read_line(entry->service, SERVICE_NAME_MAX) != READ_OK) {
-        entry->service[0] = '\0'; // If the user enters nothing, set to empty string
+    if (read_line(entry.service, SERVICE_NAME_MAX) != READ_OK) {
+        entry.service[0] = '\0';
     }
 
-    printf("Enter Username:\n");
-    if (read_line(entry->username, USERNAME_MAX) != READ_OK) {
-        entry->username[0] = '\0';
-    }
+    do {
+        printf("Username (mandatory):\n");
+        if (read_line(entry.username, USERNAME_MAX) != READ_OK) {
+            entry.username[0] = '\0';
+        }
+        trim_whitespace(entry.username);
+    } while (entry.username[0] == '\0'); // empty username -> try again
 
-    printf("Enter Password:\n");
-    if (read_password(entry->password, PASSWORD_MAX) == NULL) {
-        entry->password[0] = '\0';
-    }
+    do {
+        printf("Password (mandatory):\n");
+        if (read_password(entry.password, PASSWORD_MAX) == NULL) {
+            entry.password[0] = '\0';
+        }
+    } while (entry.password[0] == '\0'); // empty password -> try again
 
     printf("Enter Notes (optional):\n");
-    if (read_line(entry->notes, NOTES_MAX) != READ_OK) {
-        entry->notes[0] = '\0';
+    if (read_line(entry.notes, NOTES_MAX) != READ_OK) {
+        entry.notes[0] = '\0';
     }
+
+    trim_whitespace(entry.service);
+    trim_whitespace(entry.username);
+    trim_whitespace(entry.notes);
+    to_lowercase(entry.service);
+    to_lowercase(entry.username);
+    to_lowercase(entry.notes);
+
+    return entry;
 }
 
 VaultEntry *search_vault_entry(Vault *vault, const char *service) {
@@ -123,6 +138,30 @@ VaultEntry *search_vault_entry(Vault *vault, const char *service) {
     }
 
     return NULL;
+}
+
+bool delete_vault_entry(Vault *vault, VaultEntry *entry) {
+    if (!vault || !entry) return false;
+
+    bool found = false;
+
+    // Search for the entry to delete
+    for (int i = 0; i < vault->count; ++i) {
+        if (strcmp(vault->entries[i].service, entry->service) == 0 &&
+            strcmp(vault->entries[i].username, entry->username) == 0) {
+            // Shift entries to the left
+            for (int j = i; j < vault->count - 1; ++j) {
+                vault->entries[j] = vault->entries[j + 1];
+            }
+
+            vault->count--;
+            found = true;
+
+            break;
+        }
+    }
+
+    return found;
 }
 
 // === Vault Persistence ===
