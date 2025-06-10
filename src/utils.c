@@ -4,13 +4,13 @@
 #include "utils.h"
 
 #include <assert.h>
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <termios.h> // API to control terminal behavior
 #include <unistd.h>
-#include <sys/stat.h>
 
 #include "password.h"
 
@@ -138,7 +138,7 @@ void show_menu(void) {
     printf("\n===== Vault Menu =====\n");
     printf("L - List all entries\n");
     printf("A - Add a new entry\n");
-    printf("S - Search entries (TODO)\n");
+    printf("S - Search entries\n");
     printf("D - Delete an entry (TODO)\n");
     printf("Q - Quit\n");
     printf("Select an option: ");
@@ -157,16 +157,16 @@ void handle_menu_option(char option, Vault *vault) {
             if (add_vault_entry(vault, &entry)) {
                 const StorageStatus save_status = save_vault(vault);
                 if (save_status != STORAGE_OK) {
-                    fprintf(
-                        stderr,
-                        "❌ ERROR: Failed to save entry on the vault file. \n Check the error with the admin.\n");
+                    fprintf(stderr, "❌ ERROR: Failed to save entry on the vault file. \n "
+                            "Check the error with the admin.\n");
 
                     press_enter_to_continue();
                     return;
                 }
 
                 printf("✅ Entry added successfully!\n");
-                printf("➕ 🔸 %d. Service: %s\n", vault->count, vault->entries[vault->count - 1].service);
+                printf("➕ 🔸 %d. Service: %s\n", vault->count,
+                       vault->entries[vault->count - 1].service);
             } else {
                 printf("❌ Failed to add entry. Please, try again.\n");
 
@@ -176,8 +176,35 @@ void handle_menu_option(char option, Vault *vault) {
             press_enter_to_continue();
             break;
         case 's':
-            printf("🔍 Searching entries is not implemented yet.\n");
-            break;
+            while (true) {
+                printf("Enter the service name, or 'Q' to quit.\n");
+
+                char service_name[MENU_INPUT_BUFFER_SIZE];
+                if (read_line(service_name, sizeof(service_name)) != READ_OK) {
+                    fprintf(stderr, "❌ ERROR: Failed to read input. \n Check the error "
+                            "with the admin.\n");
+
+                    press_enter_to_continue();
+                }
+
+                trim_whitespace(service_name);
+                to_lowercase(service_name);
+                if (strcmp(service_name, "q") == 0) {
+                    return;
+                }
+
+                VaultEntry *found_entry = search_vault_entry(vault, service_name);
+                if (!found_entry) {
+                    printf("🔎🫣 No entries found with that name.\n");
+
+                    continue;
+                }
+
+                list_services_details(found_entry, -1);
+
+                break;
+            }
+
         case 'd': // Delete an entry
             printf("🗑️ Deleting entries is not implemented yet.\n");
             break;
@@ -207,40 +234,49 @@ void list_services(const Vault *vault) {
     printf("-------------------------------------------------\n");
     printf("Press the number of the service you want to view, or 'Q' to quit.\n");
 
+    // List service details by index or service name
     while (true) {
         char option[MENU_INPUT_BUFFER_SIZE];
         if (read_line(option, sizeof(option)) != READ_OK) {
-            fprintf(stderr, "❌ ERROR: Failed to read input. \n Check the error with the admin.\n");
+            fprintf(
+                stderr,
+                "❌ ERROR: Failed to read input.\nCheck the error with the admin.\n");
             press_enter_to_continue();
-
             break;
         }
 
         trim_whitespace(option);
         to_lowercase(option);
 
-        if (strcmp(option, "q") == 0) {
+        if (strcmp(option, "q") == 0)
             return;
+
+        const int index = atoi(option) - 1;
+
+        if (index < 0 || index >= vault->count) {
+            printf("⚠️ Invalid option. Please, try again.\n");
+            sleep(2);
+
+            continue;
         }
 
-        list_services_details(option, vault);
+        list_services_details(&vault->entries[index], index);
 
         break;
     }
 }
 
-void list_services_details(char *option, const Vault *vault) {
-    const int index = atoi(option); // Convert string to integer
-    if (index <= 0 || index > vault->count) {
-        printf("⚠️ Invalid option. Please, try again.\n");
-        sleep(2);
+void list_services_details(const VaultEntry *entry, int index) {
+    if (!entry) return;
 
-        return;
-    }
-
-    const VaultEntry *entry = &vault->entries[index - 1];
     printf("-------------------------------------------------\n");
-    printf("📄 Details for Service #%d\n", index);
+    if (index >= 0) {
+        // List services
+        printf("📄 Details for Service #%d\n", index + 1);
+    } else {
+        // Search services by name
+        printf("📄 Details for Service: %s\n", entry->service);
+    }
     printf("-------------------------------------------------\n");
     printf("🔸 Service:  %s\n", entry->service);
     printf("📝 Notes:    %s\n", entry->notes[0] ? entry->notes : "");

@@ -113,6 +113,18 @@ void get_vault_entry(VaultEntry *entry) {
     }
 }
 
+VaultEntry *search_vault_entry(Vault *vault, const char *service) {
+    if (!vault || !service) return NULL;
+
+    for (int i = 0; i < vault->count; ++i) {
+        if (strcmp(vault->entries[i].service, service) == 0) {
+            return &vault->entries[i];
+        }
+    }
+
+    return NULL;
+}
+
 // === Vault Persistence ===
 
 StorageStatus load_vault(Vault *vault) {

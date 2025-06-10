@@ -83,10 +83,19 @@ StorageStatus save_vault(const Vault *vault);
  */
 bool add_vault_entry(Vault *vault, const VaultEntry *entry);
 
-/** @brief Gets a vault entry from the user.
+/** @brief Gets a vault entry from the user input.
  *
  * @param entry Pointer to the VaultEntry structure to fill.
  */
 void get_vault_entry(VaultEntry *entry);
+
+/**
+ * @brief Searches for a vault entry by service name.
+ *
+ * @param vault Pointer to the Vault structure to search.
+ * @param service Service name to search for.
+ * @return Pointer to the VaultEntry structure if found, NULL otherwise.
+ */
+VaultEntry *search_vault_entry(Vault *vault, const char *service);
 
 #endif // STORAGE_H
